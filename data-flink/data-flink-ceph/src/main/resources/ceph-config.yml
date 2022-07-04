@@ -1,0 +1,23 @@
+#hbase连接地址
+#hbase_zookeeper_quorum: 172.16.23.37,172.16.23.38,172.16.23.39
+hbase_zookeeper_quorum: 10.11.33.58
+hbase_zookeeper_client_port: 2181
+
+#kafka连接地址
+#kafka_source_quorum: bigdata4:9092
+kafka_source_quorum: 10.11.33.58:9092
+kafka_sink_quorum: 10.11.33.58:9092
+kafka_source_topic: ceph_nginx_log_prod
+kafka_source_group: ceph-nginx-log-prod-test
+kafka_sink_topic:
+
+#clickhouse连接地址
+clickhouse_url: jdbc:clickhouse://10.11.33.58:8125/ceph_meta
+
+#IP解析文件地址
+ipfile_path: /tmp/GeoLite2-City.mmdb
+#ipfile_path: C:\\workspace\\data-flink\\data-flink-ceph\\src\\main\\resources\\GeoLite2-City.mmdb
+#ipfile_path: hdfs://nameservice1/user/hive/spark_job_lib/cloud/GeoLite2-City.mmdb
+
+#checkpoint存储位置
+fs_stateBackend: hdfs://10.11.33.58:9001/flink/checkpoint/
