@@ -1,0 +1,2 @@
+#org.apache.flink.table.connector.source.MqttDynamicTableSourceFactory
+org.apache.flink.table.connector.sourceTest.MqttDynamicTableSourceFactoryTest
