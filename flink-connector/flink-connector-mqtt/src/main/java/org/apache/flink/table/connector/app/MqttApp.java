@@ -14,7 +14,7 @@ public class MqttApp {
         StreamTableEnvironment tableEnv = StreamTableEnvironment.create(env);
 
         tableEnv.executeSql("create table flink_test (event_type_id String,event_name String ) " +
-                "WITH ('connector' = 'mqtt','hosturl' = 'tcp://172.16.23.85:32581','username' = 'system_bigdata','password' = '3881a684835683b2b6c3a52bdb09b49081136d05','topic' = 'bigdata/sv/inspection_event','format' = 'json')");
+                "WITH ('connector' = 'mqtt','hosturl' = 'tcp://IP:PORT','username' = '','password' = '','topic' = '','format' = 'json')");
 
         Table table= tableEnv.sqlQuery("SELECT event_type_id,event_name FROM flink_test");
 

@@ -1,4 +1,4 @@
-package org.apache.flink.table.connector.sourceTest;
+package org.apache.flink.table.connector.source;
 
 import org.apache.flink.api.common.serialization.DeserializationSchema;
 import org.apache.flink.configuration.ConfigOption;
@@ -6,7 +6,6 @@ import org.apache.flink.configuration.ConfigOptions;
 import org.apache.flink.configuration.ReadableConfig;
 import org.apache.flink.table.api.TableSchema;
 import org.apache.flink.table.connector.format.DecodingFormat;
-import org.apache.flink.table.connector.source.DynamicTableSource;
 import org.apache.flink.table.data.RowData;
 import org.apache.flink.table.factories.DeserializationFormatFactory;
 import org.apache.flink.table.factories.DynamicTableSourceFactory;
@@ -17,7 +16,7 @@ import java.util.Set;
 
 import static org.apache.flink.table.factories.FactoryUtil.createTableFactoryHelper;
 
-public class MqttDynamicTableSourceFactoryTest implements DynamicTableSourceFactory {
+public class MqttDynamicTableSourceFactory implements DynamicTableSourceFactory {
 
     @Override
     /**
@@ -44,7 +43,7 @@ public class MqttDynamicTableSourceFactoryTest implements DynamicTableSourceFact
         TableSchema schema = context.getCatalogTable().getSchema();
 
         // 创建并且返回一个动态表源
-        return new MqttDynamicTableSourceTest(options,decodingFormat,schema);
+        return new MqttDynamicTableSource(options,decodingFormat,schema);
     }
 
     @Override

@@ -1,4 +1,4 @@
-package org.apache.flink.table.connector.sourceTest;
+package org.apache.flink.table.connector.source;
 
 import org.apache.flink.api.common.serialization.DeserializationSchema;
 import org.apache.flink.configuration.Configuration;
@@ -15,11 +15,11 @@ import java.io.Serializable;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
-import static org.apache.flink.table.connector.source.MqttDynamicTableSourceFactory.*;
-import static org.apache.flink.table.connector.sourceTest.MqttDynamicTableSourceFactoryTest.CLIENTID;
+import static org.apache.flink.table.connector.sourceT.MqttDynamicTableSourceFactory.*;
+import static org.apache.flink.table.connector.source.MqttDynamicTableSourceFactory.CLIENTID;
 
 
-public class MqttSourceFunctionTest extends RichSourceFunction<RowData>{
+public class MqttSourceFunction extends RichSourceFunction<RowData>{
     private BlockingConnection blockingConnection;
     private ReadableConfig confs;
     //阻塞队列存储订阅的消息
@@ -30,7 +30,7 @@ public class MqttSourceFunctionTest extends RichSourceFunction<RowData>{
     private MqttTopic mqttTopic;
     private DeserializationSchema<RowData> deserializer;
 
-    public MqttSourceFunctionTest(ReadableConfig options,DeserializationSchema<RowData> deserializer) {
+    public MqttSourceFunction(ReadableConfig options, DeserializationSchema<RowData> deserializer) {
         this.confs = options;
         this.deserializer = deserializer;
     }

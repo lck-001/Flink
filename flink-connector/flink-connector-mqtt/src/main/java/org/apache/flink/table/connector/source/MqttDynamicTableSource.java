@@ -1,4 +1,4 @@
-package org.apache.flink.table.connector.sourceTest;
+package org.apache.flink.table.connector.source;
 
 import org.apache.flink.api.common.serialization.DeserializationSchema;
 import org.apache.flink.configuration.ReadableConfig;
@@ -6,17 +6,14 @@ import org.apache.flink.streaming.api.functions.source.SourceFunction;
 import org.apache.flink.table.api.TableSchema;
 import org.apache.flink.table.connector.ChangelogMode;
 import org.apache.flink.table.connector.format.DecodingFormat;
-import org.apache.flink.table.connector.source.DynamicTableSource;
-import org.apache.flink.table.connector.source.ScanTableSource;
-import org.apache.flink.table.connector.source.SourceFunctionProvider;
 import org.apache.flink.table.data.RowData;
 import org.apache.flink.types.RowKind;
 
-public class MqttDynamicTableSourceTest implements ScanTableSource {
+public class MqttDynamicTableSource implements ScanTableSource {
     private ReadableConfig options;
     private TableSchema schema;
     private DecodingFormat<DeserializationSchema<RowData>> decodingFormat;
-    public MqttDynamicTableSourceTest(ReadableConfig options,DecodingFormat<DeserializationSchema<RowData>> decodingFormat, TableSchema schema){
+    public MqttDynamicTableSource(ReadableConfig options, DecodingFormat<DeserializationSchema<RowData>> decodingFormat, TableSchema schema){
         this.options = options;
         this.decodingFormat = decodingFormat;
         this.schema = schema;
@@ -41,13 +38,13 @@ public class MqttDynamicTableSourceTest implements ScanTableSource {
         final DeserializationSchema<RowData> deserializer = decodingFormat.createRuntimeDecoder(
                 ctx,
                 schema.toPhysicalRowDataType());
-        final SourceFunction<RowData> sourceFunction = new MqttSourceFunctionTest(options,deserializer);
+        final SourceFunction<RowData> sourceFunction = new MqttSourceFunction(options,deserializer);
         return SourceFunctionProvider.of(sourceFunction, false);
     }
 
     @Override
     public DynamicTableSource copy() {
-        return new MqttDynamicTableSourceTest(options,decodingFormat,schema);
+        return new MqttDynamicTableSource(options,decodingFormat,schema);
     }
 
     @Override
