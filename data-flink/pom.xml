@@ -12,6 +12,7 @@
     <modules>
         <module>data-flink-ceph</module>
         <module>data-flink-mqtt</module>
+        <module>data-flink-http</module>
     </modules>
 
 
@@ -195,6 +196,12 @@
             <version>2.16.1</version>
         </dependency>
 
+        <!--飞书API-->
+        <dependency>
+            <groupId>com.larksuite.oapi</groupId>
+            <artifactId>larksuite-oapi</artifactId>
+            <version>1.0.17-rc2</version>
+        </dependency>
 
 <!--        <dependency>-->
 <!--            <groupId>org.apache.flink</groupId>-->
