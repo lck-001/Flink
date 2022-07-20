@@ -6,7 +6,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.data.http.bean.Virtual;
 import com.data.http.conf.HttpConf;
 import com.data.http.utlis.ClickHouseUtil;
-import com.data.http.utlis.HttpSourceUtils;
 import com.data.http.utlis.HttpUtils;
 import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.api.common.restartstrategy.RestartStrategies;
@@ -14,7 +13,6 @@ import org.apache.flink.api.common.time.Time;
 import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.runtime.state.filesystem.FsStateBackend;
 import org.apache.flink.streaming.api.CheckpointingMode;
-import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.util.Collector;
@@ -61,10 +59,7 @@ public class HttpVirtualApp {
         env.getCheckpointConfig().setTolerableCheckpointFailureNumber(5);
         env.setRestartStrategy(RestartStrategies.fixedDelayRestart(3, Time.of(10, TimeUnit.SECONDS)));//重启策略：重启3次，间隔10s
 
-        DataStreamSource<String> source = env.addSource(new HttpUtils());
-
-        source.print("sourece====");
-        SingleOutputStreamOperator<Virtual> flatMap = source.map(JSON::parseObject)
+        SingleOutputStreamOperator<Virtual> flatMap = env.addSource(new HttpUtils()).map(JSON::parseObject)
                 .flatMap(new FlatMapFunction<JSONObject, Virtual>() {
                     @Override
                     public void flatMap(JSONObject jsonObject, Collector<Virtual> collector) throws Exception {

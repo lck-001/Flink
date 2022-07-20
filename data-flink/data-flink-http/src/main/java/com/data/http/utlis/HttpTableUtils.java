@@ -15,10 +15,9 @@ import java.net.URLEncoder;
 import java.util.Map;
 
 import static com.data.http.conf.HttpConf.*;
-import static com.data.http.conf.HttpConf.HTTP_FILTER;
 
-public class HttpUtils extends RichSourceFunction<String> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(HttpUtils.class);
+public class HttpTableUtils extends RichSourceFunction<String> {
+    private static final Logger LOGGER = LoggerFactory.getLogger(HttpTableUtils.class);
     private static String token_get_url;
     private static String table_get_url;
     private static HttpURLConnection con = null;
@@ -30,31 +29,20 @@ public class HttpUtils extends RichSourceFunction<String> {
         Map<String, String> paramMap = getRuntimeContext().getExecutionConfig().getGlobalJobParameters().toMap();
         APP_ID = paramMap.get("app_id");
         APP_SECRET = paramMap.get("app_secret");
-        HTTP_FILTER = paramMap.get("http_filter");
-        APP_TOKEN = paramMap.get("app_token");
-        TABLE_ID = paramMap.get("table_id");
-        VIEW_ID = paramMap.get("view_id");
         token_get_url = "https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal/?app_id="
                 + URLEncoder.encode(APP_ID, "utf-8")
                 + "&app_secret=" + URLEncoder.encode(APP_SECRET, "utf-8");
-        table_get_url = "https://open.feishu.cn/open-apis/bitable/v1/apps/"
-                +URLEncoder.encode(APP_TOKEN, "utf-8")
-                +"/tables/"+URLEncoder.encode(TABLE_ID, "utf-8")
-                +"/records?view_id="+URLEncoder.encode(VIEW_ID, "utf-8")
-                + (HTTP_FILTER != null ? "&filter=" + URLEncoder.encode(HTTP_FILTER, "utf-8") : "");
-        System.out.println("open==="+APP_ID+APP_SECRET+HTTP_FILTER+token_get_url);
-        System.out.println("构造器==="+table_get_url);
+        table_get_url = "https://open.feishu.cn/open-apis/sheets/v2/spreadsheets/shtcnzFXmzctrVxKl1jUabWuQte/values/0c48ca!A2:C";
     }
 
-    public HttpUtils(){}
-
+    public HttpTableUtils(){
+    }
 
     @Override
     public void run(SourceContext<String> sourceContext) throws Exception {
             ACCESS_TOKEN = JSON.parseObject(httpGet(token_get_url)).getString("tenant_access_token");
             sourceContext.collect(httpGet(table_get_url));
     }
-
 
     @Override
     public void cancel() {
