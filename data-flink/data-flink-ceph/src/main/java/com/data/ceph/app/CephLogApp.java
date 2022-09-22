@@ -309,7 +309,7 @@ public class CephLogApp {
                     }
                 },
                 60, TimeUnit.SECONDS);
-        record.print("record:"+record);
+//        record.print("record:"+record);
 
 
         DataStream<CephAccessRecord> sideOutput = validDS.getSideOutput(invalidTag);
