@@ -47,7 +47,7 @@ public class ClickHouseUtil {
                         }
                     }
                 },
-                new JdbcExecutionOptions.Builder().withBatchSize(1).build(),
+                new JdbcExecutionOptions.Builder().withBatchIntervalMs(5*1000).build(),
                 new JdbcConnectionOptions.JdbcConnectionOptionsBuilder()
                         .withUrl(CephConfig.CLICKHOUSE_URL)
                         .withDriverName(CephConfig.CLICKHOUSE_DRIVER)
