@@ -53,8 +53,8 @@ public class HttpSeatsApp {
                         JSONArray values = jsonObject.getJSONObject("data").getJSONObject("valueRange").getJSONArray("values");
                         for (int i = 0; i <values.toArray().length ; i++) {
                             //获取到的date为距离1899-12-30的天数
-                            String intValue = values.getJSONArray(i).getString(0);
-                            robotRate.robot_type = values.getJSONArray(i).getString(1);
+                            String intValue = values.getJSONArray(i).getString(0).trim();
+                            robotRate.robot_type = values.getJSONArray(i).getString(1).trim();
                             robotRate.seats_count = values.getJSONArray(i).getFloat(2);
                             robotRate.date = DateUtils.dateutils(Integer.parseInt(intValue));
                             collector.collect(robotRate);
