@@ -94,8 +94,11 @@ public class CephLogApp {
                 CephNginxLog.CephRequestHeader request_header_info = JSON.parseObject(cephNginxLog.fields.request_header, CephNginxLog.CephRequestHeader.class);
                 CephAccessLog cephAccessLog = new CephAccessLog();
                 if (request_header_info != null && "".equals(request_header_info.authorization)) {
-                    if (cephNginxLog.fields.request.contains("AWSAccessKeyId")) {
+                    if (cephNginxLog.fields.request.contains("AWSAccessKeyId=")) {
                         cephAccessLog.access_key = cephNginxLog.fields.request.split("AWSAccessKeyId=", 2)[1].replaceAll("&.*", "");
+                    }
+                    if (cephNginxLog.fields.request.contains("AWSAccessKeyId%3D")) {
+                        cephAccessLog.access_key = cephNginxLog.fields.request.split("AWSAccessKeyId%3D", 2)[1].replaceAll("%.*", "");
                     }
                 }
                 Pattern pattern = Pattern.compile("^AWS (.+):.*|^AWS4-HMAC-SHA256 Credential=(.*?)/");
