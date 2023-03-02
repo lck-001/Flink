@@ -21,8 +21,11 @@ public class HttpUtils extends RichSourceFunction<String> {
     private static final Logger LOGGER = LoggerFactory.getLogger(HttpUtils.class);
     private static String token_get_url;
     private static String table_get_url;
+    private static String table_query_url;
     private static HttpURLConnection con = null;
     private static BufferedReader in = null;
+    private String page_token = null;
+    private static boolean isRunning = true;
 
 
     @Override
@@ -38,35 +41,47 @@ public class HttpUtils extends RichSourceFunction<String> {
                 + URLEncoder.encode(APP_ID, "utf-8")
                 + "&app_secret=" + URLEncoder.encode(APP_SECRET, "utf-8");
         table_get_url = "https://open.feishu.cn/open-apis/bitable/v1/apps/"
-                +URLEncoder.encode(APP_TOKEN, "utf-8")
-                +"/tables/"+URLEncoder.encode(TABLE_ID, "utf-8")
-                +"/records?view_id="+URLEncoder.encode(VIEW_ID, "utf-8")
+                + URLEncoder.encode(APP_TOKEN, "utf-8")
+                + "/tables/" + URLEncoder.encode(TABLE_ID, "utf-8")
+                + "/records?view_id=" + URLEncoder.encode(VIEW_ID, "utf-8")
+                + "&page_size=500"
                 + (HTTP_FILTER != null ? "&filter=" + URLEncoder.encode(HTTP_FILTER, "utf-8") : "");
-        System.out.println("open==="+APP_ID+APP_SECRET+HTTP_FILTER+token_get_url);
-        System.out.println("构造器==="+table_get_url);
+        table_query_url = table_get_url;
     }
 
-    public HttpUtils(){}
+    public HttpUtils() {
+    }
 
 
     @Override
     public void run(SourceContext<String> sourceContext) throws Exception {
+        while (isRunning) {
             ACCESS_TOKEN = JSON.parseObject(httpGet(token_get_url)).getString("tenant_access_token");
-            sourceContext.collect(httpGet(table_get_url));
+            String tableJson = httpGet(table_query_url);
+            page_token = JSON.parseObject(tableJson).getJSONObject("data").getString("page_token");
+            if (page_token == null || "".equals(page_token)) {
+                isRunning = false;
+            }else {
+                table_query_url = table_get_url + "&page_token=" + URLEncoder.encode(page_token, "utf-8");
+                sourceContext.collect(tableJson);
+            }
+        }
     }
 
 
     @Override
     public void cancel() {
-        if (in != null) {
-            try {
-                in.close();
-            } catch (IOException e) {
-                e.printStackTrace();
+        while (!isRunning) {
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
-        }
-        if (con != null) {
-            con.disconnect();
+            if (con != null) {
+                con.disconnect();
+            }
         }
     }
 
@@ -76,8 +91,11 @@ public class HttpUtils extends RichSourceFunction<String> {
 
         try {
             URL url = new URL(getUrl);
-            con = (HttpURLConnection)url.openConnection();
+            con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("GET");
+            if (getUrl.contains("tenant_access_token")){
+                con.setRequestMethod("POST");
+            }
             con.setDoOutput(true);
             con.setRequestProperty("Content-Type", "application/json");
             con.setRequestProperty("charset", "utf-8");
@@ -87,7 +105,7 @@ public class HttpUtils extends RichSourceFunction<String> {
             in = new BufferedReader(new InputStreamReader(con.getInputStream()));
 
             String inputLine;
-            while((inputLine = in.readLine()) != null) {
+            while ((inputLine = in.readLine()) != null) {
                 inputString.append(inputLine);
             }
         } catch (Exception var16) {

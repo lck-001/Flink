@@ -1,0 +1,18 @@
+#http_app连接信息
+app_id: cli_a24e455d667b500c
+app_secret: OMBShEjrNTINIphrIZ8mphWOSAdf1ES2
+#app_secret: OMBShEjrNTINIphrIZ8mphWOSAdf1ES2
+
+#http连接参数
+app_token: bascnLgRnGlYtasEOVegZYAyN6n
+table_id: tblSll3lJVdNS1rO
+view_id: vew0rw4z88
+
+#clickhouse连接地址
+clickhouse_url: jdbc:clickhouse://172.16.32.96:9090/
+clickhouse_username: distributed-write
+clickhouse_password: CloudMinds#
+clickhouse_tablename: harix.dwd_trainer_operation_device_s_d
+
+#checkpoint存储位置
+fs_stateBackend: hdfs://10.11.33.58:9001/user/chengkang/checkpoint

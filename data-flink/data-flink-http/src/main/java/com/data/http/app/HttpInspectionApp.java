@@ -65,22 +65,22 @@ public class HttpInspectionApp {
                         Inspection inspection = new Inspection();
                         JSONArray items = jsonObject.getJSONObject("data").getJSONArray("items");
                         for (int i = 0; i < items.toArray().length; i++) {
-                            inspection.robot_id = items.getJSONObject(i).getJSONObject("fields").getString("Robot唯一标识").trim();
-                            inspection.user_email = items.getJSONObject(i).getJSONObject("fields").getJSONObject("创建人").getString("email").trim();
-                            inspection.create_user = items.getJSONObject(i).getJSONObject("fields").getJSONObject("创建人").getString("name").trim();
-                            inspection.electric_status = items.getJSONObject(i).getJSONObject("fields").getString("本体电量").trim();
-                            inspection.slam_status = items.getJSONObject(i).getJSONObject("fields").getString("检查定位和机器人点位（是否正常）").trim();
-                            inspection.video_status = items.getJSONObject(i).getJSONObject("fields").getString("检查语音、视频是否正常").trim();
-                            inspection.user_id = items.getJSONObject(i).getJSONObject("fields").getString("账户ID（例如：HF-FCYY-0138）账户ID（例如：HF-FCYY-0138）").trim();
-                            inspection.tenant_name = items.getJSONObject(i).getJSONObject("fields").getString("项目名称").trim();
-                            inspection.exception_info = items.getJSONObject(i).getJSONObject("fields").getString("是否有任务异常（CROSS系统查看任务记录异常挂起，任务未执行，发起失败，任务进行中）").trim();
-                            inspection.user_name = items.getJSONObject(i).getJSONObject("fields").getString("子项目（账户名称：例如：         泉州台商方舱医院-GL-0149-3-1-1 ）").trim();
-                            inspection.network_status = items.getJSONObject(i).getJSONObject("fields").getString("检查网络连接是否正常（机器人本身是连接4G网，结果却连的是WIFI，反之亦然）").trim();
-                            inspection.ccu_status = items.getJSONObject(i).getJSONObject("fields").getString("检查是否出现CCU断联").trim();
+                            inspection.robot_id = items.getJSONObject(i).getJSONObject("fields").getString("Robot唯一标识");
+                            inspection.user_email = items.getJSONObject(i).getJSONObject("fields").getJSONObject("创建人").getString("email");
+                            inspection.create_user = items.getJSONObject(i).getJSONObject("fields").getJSONObject("创建人").getString("name");
+                            inspection.electric_status = items.getJSONObject(i).getJSONObject("fields").getString("本体电量");
+                            inspection.slam_status = items.getJSONObject(i).getJSONObject("fields").getString("检查定位和机器人点位（是否正常）");
+                            inspection.video_status = items.getJSONObject(i).getJSONObject("fields").getString("检查语音、视频是否正常");
+                            inspection.user_id = items.getJSONObject(i).getJSONObject("fields").getString("账户ID（例如：HF-FCYY-0138）账户ID（例如：HF-FCYY-0138）");
+                            inspection.tenant_name = items.getJSONObject(i).getJSONObject("fields").getString("项目名称");
+                            inspection.exception_info = items.getJSONObject(i).getJSONObject("fields").getString("是否有任务异常（CROSS系统查看任务记录异常挂起，任务未执行，发起失败，任务进行中）");
+                            inspection.user_name = items.getJSONObject(i).getJSONObject("fields").getString("子项目（账户名称：例如：         泉州台商方舱医院-GL-0149-3-1-1 ）");
+                            inspection.network_status = items.getJSONObject(i).getJSONObject("fields").getString("检查网络连接是否正常（机器人本身是连接4G网，结果却连的是WIFI，反之亦然）");
+                            inspection.ccu_status = items.getJSONObject(i).getJSONObject("fields").getString("检查是否出现CCU断联");
                             inspection.event_time = (items.getJSONObject(i).getJSONObject("fields").getLong("巡检时间"))/1000;
-                            inspection.open_status = items.getJSONObject(i).getJSONObject("fields").getString("是否开机").trim();
-                            inspection.alarm_info = items.getJSONObject(i).getJSONObject("fields").getString("未处理的告警信息/事件").trim();
-                            inspection.remark = items.getJSONObject(i).getJSONObject("fields").getString("备注").trim();
+                            inspection.open_status = items.getJSONObject(i).getJSONObject("fields").getString("是否开机");
+                            inspection.alarm_info = items.getJSONObject(i).getJSONObject("fields").getString("未处理的告警信息/事件");
+                            inspection.remark = items.getJSONObject(i).getJSONObject("fields").getString("备注");
                             collector.collect(inspection);
                         }
                     }

@@ -1,0 +1,22 @@
+#http_app连接信息
+app_id: cli_a24e455d667b500c
+app_secret: OMBShEjrNTINIphrIZ8mphWOSAdf1ES2
+
+#http连接参数及过滤参数
+app_token: bascnzY7kmzeDb15yLIEIbGWNud
+table_id: tbl0TT803viYHbBh
+view_id: vewW5cWK2U
+#http_filter: CurrentValue.[时间]>=TODAY()
+#http_filter: CurrentValue.[时间]>=TODAY()-200
+http_filter: CurrentValue.[时间]>=TODAY()-3&&CurrentValue.[时间]<TODAY()-2
+#http_filter: AND(CurrentValue.[姓名].contains("朱丽辉"),CurrentValue.[时间]>TODATE("2022-10-12")&&CurrentValue.[时间]<TODATE("2022-10-13"))
+#http_filter: AND(CurrentValue.[姓名].contains("袁维利"),CurrentValue.[时间]>=TODAY()-1)
+
+#clickhouse连接地址
+clickhouse_url: jdbc:clickhouse://172.16.32.96:9090/
+clickhouse_username: distributed-write
+clickhouse_password: CloudMinds#
+clickhouse_tablename: harix.dwd_service_virtual_data
+
+#checkpoint存储位置
+fs_stateBackend: hdfs://nameservice1/tmp/http_virtual

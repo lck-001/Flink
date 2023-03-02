@@ -66,6 +66,9 @@ public class HttpTableUtils extends RichSourceFunction<String> {
             URL url = new URL(getUrl);
             con = (HttpURLConnection)url.openConnection();
             con.setRequestMethod("GET");
+            if (getUrl.contains("tenant_access_token")){
+                con.setRequestMethod("POST");
+            }
             con.setDoOutput(true);
             con.setRequestProperty("Content-Type", "application/json");
             con.setRequestProperty("charset", "utf-8");
