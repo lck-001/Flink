@@ -1,0 +1,72 @@
+base:
+  jobName: FeiShuMultidimensionalTable
+  sourceType: http
+  # checkpoint 参数
+  checkpointTime: 6000
+  checkpointPause: 5000
+  checkpointTimeout: 120000
+  checkpointMode: exactly_once
+  checkpointCleanup: retain_on_cancellation
+#  checkpointPath:  hdfs://10.11.33.163:9001/user/chengkang/checkpoint
+#  checkpointPath:  hdfs://cdh-slave01.cloudminds.com:8020/tmp/flink/checkpoints/test/
+  maxConcurrentCheckpoint: 1
+source:
+  appId: cli_a24e455d667b500c
+  appSecret: OMBShEjrNTINIphrIZ8mphWOSAdf1ES2
+  httpUrl: https://open.feishu.cn/open-apis/bitable/v1/apps/
+  appToken: bascnLgRnGlYtasEOVegZYAyN6n
+  tableId: tblSll3lJVdNS1rO
+  viewId: vew0rw4z88
+#  httpFilter: CurrentValue.[时间]>=TODAY()
+  tableSchema:
+    schema:
+      Robot ID: STRING
+      姓名: ROW<`name` STRING,`email` STRING>
+      时间: BIGINT
+      TTS及现场声音:  STRING
+      租户: STRING
+      账号名称: STRING
+      Hari状态: STRING
+      前端屏幕显示显示: STRING
+      远程重启操作是否恢复: STRING
+      异常情况著名jira编号: STRING
+      备注: STRING
+sink:
+  sinkClickhouse:
+    dbTable: cdc_test.person1
+    JDBCUrl: jdbc:clickhouse://10.11.33.163:8125
+    sinkDatabase: ceph_meta
+    sinkTable: dwd_service_virtual_data_test
+    userName: chengkang
+    passWord: chengkang123
+    tableSchema:
+      schema:
+        robot_id: string
+        create_user: string
+        user_email: string
+        event_time:  bigint
+        tts_status: string
+        tenant_code: string
+        user_name: string
+        harix_status: string
+        screen_status:  string
+        recover_status:  string
+        jira:  string
+        remark:  string
+        robot_type:  string
+  transformSql: >
+    select
+    `Robot ID` as robot_id,
+    `姓名`.`name` as create_user,
+    `姓名`.`email` as user_email,
+    `时间`/1000 as  event_time,
+    `TTS及现场声音` as tts_status,
+    `租户`  as tenant_code,
+    `账号名称`  as user_name,
+    `Hari状态`   as harix_status,
+    `前端屏幕显示显示`   as screen_status,
+    `远程重启操作是否恢复`   as recover_status,
+    `异常情况著名jira编号`   as jira,
+    `备注` as remark,
+    'virtual' as robot_type
+     from source_table CROSS JOIN UNNEST(items) AS t (fields)

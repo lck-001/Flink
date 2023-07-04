@@ -1,0 +1,63 @@
+base:
+  jobName: FeiShuMultidimensionalTable
+  sourceType: http
+  # checkpoint 参数
+  checkpointTime: 6000
+  checkpointPause: 5000
+  checkpointTimeout: 120000
+  #  checkpointPath:  hdfs://10.11.33.163:9001/user/chengkang/checkpoint
+  #  checkpointPath:  hdfs://cdh-slave01.cloudminds.com:8020/tmp/flink/checkpoints/test/
+  checkpointPath:  hdfs://nameservice1/tmp/http_inspection
+  maxConcurrentCheckpoint: 1
+source:
+  appId: cli_a24e455d667b500c
+  appSecret: OMBShEjrNTINIphrIZ8mphWOSAdf1ES2
+  httpUrl: https://open.feishu.cn/open-apis/bitable/v1/apps/
+  appToken: QjtaboaKLaIFM3siiulcWGd2n8e
+  tableId: tblm2sdNdrOvKs8A
+  viewId: vew51zZK4w
+  httpFilter: CurrentValue.[日期]>=TODAY()
+  tableSchema:
+    schema:
+      Robot唯一标识: STRING
+      创建人: ROW<`name` STRING,`email` STRING>  #字段类型:<人员、创建人、修改人> --jsonobject
+      前端PAD显示页面是否正常: STRING
+      子项目（账户名称：例如： 泉州台商方舱医院-GL-0149-3-1-1 ）: STRING
+      客户名称: STRING
+      日期: BIGINT
+      是否开机: STRING
+      是否有任务异常（CROSS系统查看任务记录异常挂起，任务未执行，发起失败，任务进行中）: STRING
+      未处理的告警信息/事件: STRING
+      本体电量: STRING
+      检查定位和机器人点位（是否正常）: STRING
+      检查是否出现CCU断联: STRING
+      账户ID（例如：HF-FCYY-0138）账户ID（例如：HF-FCYY-0138）: STRING
+      备注: STRING
+sink:
+  sinkClickhouse:
+    JDBCUrl: jdbc:clickhouse://10.11.33.163:8125/ceph_meta
+    sinkDatabase: ceph_meta
+    sinkTable: dwd_service_inspection_data
+    userName: chengkang
+    passWord: chengkang123
+  transformSql: >
+    select
+    `日期`/1000 as event_time,
+    `创建人`.`name` as create_user,
+    `客户名称` as tenant_name,
+    `子项目（账户名称：例如： 泉州台商方舱医院-GL-0149-3-1-1 ）` as user_name,
+    `账户ID（例如：HF-FCYY-0138）账户ID（例如：HF-FCYY-0138）` as user_id,
+    `Robot唯一标识` as robot_id,
+    `是否开机` as open_status,
+    `是否有任务异常（CROSS系统查看任务记录异常挂起，任务未执行，发起失败，任务进行中）` as exception_info,
+    '' as network_status,
+    '' as video_status,
+    `检查是否出现CCU断联` as ccu_status,
+    `检查定位和机器人点位（是否正常）` as slam_status,
+    `未处理的告警信息/事件` as alarm_info,
+    `前端PAD显示页面是否正常` as pad_status,
+    `本体电量` as electric_status,
+    `备注` as remark,
+    `创建人`.`email` as user_email,
+    'ginger-lite' as robot_type
+     from source_table CROSS JOIN UNNEST(items) AS t (fields)

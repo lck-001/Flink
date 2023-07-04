@@ -1,0 +1,61 @@
+base:
+  jobName: FeiShuMultidimensionalTable
+  sourceType: http
+  # checkpoint 参数
+  checkpointTime: 6000
+  checkpointPause: 5000
+  checkpointTimeout: 120000
+  checkpointMode: exactly_once
+  checkpointCleanup: retain_on_cancellation
+#  checkpointPath:  hdfs://10.11.33.163:9001/user/chengkang/checkpoint
+#  checkpointPath:  hdfs://cdh-slave01.cloudminds.com:8020/tmp/flink/checkpoints/test/
+  maxConcurrentCheckpoint: 1
+source:
+  appId: cli_a24e455d667b500c
+  appSecret: OMBShEjrNTINIphrIZ8mphWOSAdf1ES2
+  httpUrl: https://open.feishu.cn/open-apis/bitable/v1/apps/
+  appToken: bascnWUJdESV7t41tdWUbypVIwf
+  tableId: tblyGnqoFUxAcwYe
+  viewId: vew90i6ABt
+  #  httpFilter: CurrentValue.[时间]>=TODAY()
+  tableSchema:
+    schema:
+      字段附件: ARRAY<ROW<file_token STRING>>
+      年龄: STRING
+      性别: STRING
+      位置: ROW<`address` STRING,`adname` STRING,`cityname` STRING>
+      人员: ROW<`name` STRING,`email` STRING>  #字段类型:<人员、创建人、修改人> --jsonobject
+      日期: BIGINT  #字段类型：<日期> --时间戳
+sink:
+  sinkClickhouse:
+#    dbTable: cdc_test.person1
+    JDBCUrl: jdbc:clickhouse://10.11.33.163:8125
+    sinkDatabase: ceph_meta
+    sinkTable: dwd_service_virtual_data_test
+    userName: chengkang
+    passWord: chengkang123
+    tableSchema:
+      schema:
+        robot_id: string
+        create_user: string
+        user_email: string
+        event_time:  bigint
+        tts_status: string
+        tenant_code: string
+        user_name: string
+        harix_status: string
+        screen_status:  string
+        recover_status:  string
+        jira:  string
+        remark:  string
+  transformSql: >
+    select
+    `字段附件`[1].`file_token` as file_token,
+    `年龄` as age,
+    `性别` as sex,
+    `位置`.`adname` as adname,
+    `位置`.`cityname` as cityname,
+    `人员`.`name` as create_user,
+    `人员`.`email` as user_email,
+    `日期` as  event_time
+     from source_table CROSS JOIN UNNEST(items) AS t (fields)

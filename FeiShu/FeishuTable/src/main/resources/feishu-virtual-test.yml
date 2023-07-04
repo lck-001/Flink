@@ -1,0 +1,74 @@
+base:
+  jobName: FeiShuMultidimensionalTable
+  sourceType: http
+  # checkpoint 参数
+  checkpointTime: 6000
+  checkpointPause: 5000
+  checkpointTimeout: 120000
+  checkpointMode: exactly_once
+  checkpointCleanup: retain_on_cancellation
+#  checkpointPath:  hdfs://10.11.33.163:9001/user/chengkang/checkpoint
+#  checkpointPath:  hdfs://cdh-slave01.cloudminds.com:8020/tmp/flink/checkpoints/test/
+  maxConcurrentCheckpoint: 1
+source:
+  appId: cli_a24e455d667b500c
+  appSecret: OMBShEjrNTINIphrIZ8mphWOSAdf1ES2
+  httpUrl: https://open.feishu.cn/open-apis/bitable/v1/apps/
+#  appToken: bascnzY7kmzeDb15yLIEIbGWNud
+#  tableId: tbl0TT803viYHbBh
+#  viewId: vew6W7btMg
+##  httpFilter: CurrentValue.[时间]>=TODAY()
+  appToken: QjtaboaKLaIFM3siiulcWGd2n8e
+  tableId: tblm2sdNdrOvKs8A
+  viewId: vew51zZK4w
+#  httpFilter: CurrentValue.[巡检时间]>=TODAY()-1
+  tableSchema:
+    schema:
+      姓名: ROW<`name` STRING,`email` STRING>  #字段类型:<人员、创建人、修改人> --jsonobject
+      时间: BIGINT  #字段类型：<日期> --时间戳
+      客户编码: STRING
+      账号名称: STRING
+      Robot ID: STRING
+      前端屏幕显示: STRING
+      Hari状态: STRING
+      TTS及现场声音: STRING
+      远程重启操作是否恢复: STRING
+      异常情况注明jira编号: STRING
+      备注: STRING
+sink:
+  sinkClickhouse:
+#    dbTable: cdc_test.person1
+    JDBCUrl: jdbc:clickhouse://10.11.33.163:8125
+    sinkDatabase: ceph_meta
+    sinkTable: dwd_service_virtual_data_test
+    userName: chengkang
+    passWord: chengkang123
+    tableSchema:
+      schema:
+        robot_id: string
+        create_user: string
+        user_email: string
+        event_time:  bigint
+        tts_status: string
+        tenant_code: string
+        user_name: string
+        harix_status: string
+        screen_status:  string
+        recover_status:  string
+        jira:  string
+        remark:  string
+  transformSql: >
+    select
+    `Robot ID` as robot_id,
+    `姓名`.`name` as create_user,
+    `姓名`.`email` as user_email,
+    `时间` as  event_time,
+    `TTS及现场声音` as tts_status,
+    `客户编码` as tenant_code,
+    `账号名称`  as user_name,
+    `Hari状态`   as harix_status,
+    `前端屏幕显示`   as screen_status,
+    `远程重启操作是否恢复`   as recover_status,
+    `异常情况注明jira编号`   as jira,
+    `备注` as remark
+     from source_table CROSS JOIN UNNEST(items) AS t (fields)
